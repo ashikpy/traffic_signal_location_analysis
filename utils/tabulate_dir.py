@@ -12,9 +12,3 @@ def tabulate_files(dir_path, target_ext):
         table_rows, headers=["Index", "File Name"], tablefmt="grid")
 
     return matched_files, tabulated
-
-
-if __name__ == "__main__":
-    # Example usage
-    original_list, tabulated_list = tabulate_files("states_geojson", "geojson")
-    print(tabulated_list)

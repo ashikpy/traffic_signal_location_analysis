@@ -6,7 +6,7 @@ import os
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 geojson_dir = os.path.join(base_dir, "..", "states_geojson")
-output_dir = os.path.join(base_dir, "..", "output_maps")
+output_dir = os.path.join(base_dir, "..", "output_maps/state_highlight")
 
 
 def main():
