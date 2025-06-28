@@ -22,6 +22,7 @@ def convert_geojson_to_csv(geojson_path, csv_dir):
 
 
 def main():
+
     geojson_dir = "geojson"
     target_ext = "data"
 

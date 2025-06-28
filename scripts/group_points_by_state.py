@@ -6,7 +6,7 @@ from utils.tabulate_dir import tabulate_files
 
 # Paths
 INDIA_CSV_PATH = "data/india.csv"
-GEOJSON_FOLDER = "states_geojson"
+GEOJSON_FOLDER = "polygon_geojson"
 OUTPUT_FOLDER = "data/state_csv"
 
 

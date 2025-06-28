@@ -5,7 +5,7 @@ from osm2geojson import json2geojson
 from config.indian_regions import state_names, union_territories
 
 # Create output folder
-os.makedirs("states_geojson", exist_ok=True)
+os.makedirs("polygon_geojson", exist_ok=True)
 
 
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
@@ -28,8 +28,8 @@ for state in union_territories + state_names:
         print(f"❌ Failed: {state} — HTTP {response.status_code}")
         continue
 
-    osm_path = f"states_geojson/{state.replace(' ', '_')}.osm.json"
-    geojson_path = f"states_geojson/{state.replace(' ', '_')}.geojson"
+    osm_path = f"polygon_geojson/{state.replace(' ', '_')}.osm.json"
+    geojson_path = f"polygon_geojson/{state.replace(' ', '_')}.geojson"
 
     # Save raw OSM JSON
     with open(osm_path, "w") as f:
