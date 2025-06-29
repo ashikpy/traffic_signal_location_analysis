@@ -1,6 +1,11 @@
 import geopandas as gpd
 from utils.tabulate_dir import tabulate_files
 import os
+from rich import print
+from rich.console import Console
+from rich.prompt import Prompt
+from rich.panel import Panel
+from rich import box
 
 
 def convert_geojson_to_csv(geojson_path, csv_dir):
@@ -22,9 +27,8 @@ def convert_geojson_to_csv(geojson_path, csv_dir):
 
 
 def main():
-
-    geojson_dir = "geojson"
-    target_ext = "data"
+    geojson_dir = "data/traffic_geojson"
+    target_ext = "data/traffic_csv"
 
     # Check if these directories exist
     try:
@@ -34,33 +38,41 @@ def main():
         print(f"Error creating directories: {e}")
         return
 
+    console = Console()
+
     # Tabulate the files in the directory
-    orignal_list, tabulated_list = tabulate_files(geojson_dir, "geojson")
+    orignal_list = tabulate_files(geojson_dir, "geojson")[0]
 
     if not orignal_list:
-        print("No GeoJSON files found in the directory.")
+        console.print(
+            "[bold red]No GeoJSON files found in the directory.[/bold red]")
         return
     else:
-        print("Available GeoJSON files:")
-        print(tabulated_list)
+        file_list_text = "\n".join(
+            f"[bold green]{idx}[/bold green]: {file.split('/')[-1].split('.')[0].split('_')[0].capitalize()}"
+            for idx, file in enumerate(orignal_list)
+        )
+        console.print(Panel(file_list_text, title="Available GeoJSON Files",
+                      box=box.ROUNDED, style="cyan", expand=False))
 
     try:
-        index = int(input("Enter the index of the GeoJSON file to convert: "))
+        index = int(Prompt.ask(
+            "[bold yellow]Enter the index of the GeoJSON file to convert (N to cancel)[/bold yellow]"))
         if index < 0 or index >= len(orignal_list):
             raise IndexError("Index out of range.")
         geojson_path = orignal_list[index]
-        print(f"Selected file: {geojson_path}")
-        verification = input(
-            f"Your C will be saved in the 'data' directory with the name {geojson_path.split('/')[-1].split('.')[0]}.csv Ok? (Y/N) "
+        console.print(f"[bold blue]Selected file:[/bold blue] {geojson_path}")
+        verification = Prompt.ask(
+            f"[bold magenta]Your CSV will be saved as [italic]{geojson_path.split('/')[-1].split('.')[0]}.csv[/italic]. Proceed? (Y/N)[/bold magenta]"
         ).strip().upper()
         if verification != 'Y':
-            print("Conversion cancelled.")
+            console.print("[bold red]Conversion cancelled.[/bold red]")
             return
         else:
             result = convert_geojson_to_csv(geojson_path, target_ext)
-            print(result)
+            console.print(f"[bold green]{result}[/bold green]")
     except (ValueError, IndexError) as e:
-        print(f"Invalid input: {e}")
+        console.print(f"[bold red]Invalid input:[/bold red] {e}")
         return
 
 

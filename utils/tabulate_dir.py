@@ -2,7 +2,7 @@ import glob
 import tabulate
 
 
-def tabulate_files(dir_path, target_ext):
+def tabulate_files(dir_path, target_ext) -> tuple:
     # List all files with the given extension
     matched_files = glob.glob(f"{dir_path}/*.{target_ext}")
 

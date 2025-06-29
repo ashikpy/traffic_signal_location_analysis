@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Copy Python Module Path",
+      "type": "shell",
+      "command": "sh",
+      "args": [
+        "-c",
+        "f='${file}'; w='${workspaceFolder}'; mod=${f%.py}; mod=${mod#${w}/}; mod=${mod////.}; echo python3 -m $mod | pbcopy"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "silent"
+      }
+    }
+  ]
+}
