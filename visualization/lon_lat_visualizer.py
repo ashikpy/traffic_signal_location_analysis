@@ -8,6 +8,7 @@ from rich.prompt import IntPrompt
 from rich.panel import Panel
 from rich.console import Console
 from rich import box
+from utils.rich_tabulate import rich_tablulate
 
 console = Console()
 
@@ -15,12 +16,7 @@ console = Console()
 def main():
     csv_dir = "data/traffic_csv"
     original_file = tabulate_files(csv_dir, "csv")[0]
-    file_list_text = "\n".join(
-        f"[bold green]{idx}[/bold green]: {file.split('/')[-1].split('.')[0].split('_')[0].capitalize()}"
-        for idx, file in enumerate(original_file)
-    )
-    console.print(Panel(file_list_text, title="Available CSV Files",
-                  box=box.ROUNDED, style="cyan", expand=False))
+    rich_tablulate(original_file)
 
     try:
         input_index = IntPrompt.ask(

@@ -4,4 +4,4 @@ def fancy_text_box(message: str) -> str:
     top = "╔" + "═" * width + "╗"
     middle = f"║{' ' * padding}{message}{' ' * padding}║"
     bottom = "╚" + "═" * width + "╝"
-    return f"{top}\n{middle}\n{bottom}"
+    print(f"{top}\n{middle}\n{bottom}")

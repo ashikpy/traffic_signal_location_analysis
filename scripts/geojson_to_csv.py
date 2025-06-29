@@ -4,8 +4,7 @@ import os
 from rich import print
 from rich.console import Console
 from rich.prompt import Prompt
-from rich.panel import Panel
-from rich import box
+from utils.rich_tabulate import rich_tablulate
 
 
 def convert_geojson_to_csv(geojson_path, csv_dir):
@@ -48,12 +47,7 @@ def main():
             "[bold red]No GeoJSON files found in the directory.[/bold red]")
         return
     else:
-        file_list_text = "\n".join(
-            f"[bold green]{idx}[/bold green]: {file.split('/')[-1].split('.')[0].split('_')[0].capitalize()}"
-            for idx, file in enumerate(orignal_list)
-        )
-        console.print(Panel(file_list_text, title="Available GeoJSON Files",
-                      box=box.ROUNDED, style="cyan", expand=False))
+        rich_tablulate(orignal_list)
 
     try:
         index = int(Prompt.ask(
