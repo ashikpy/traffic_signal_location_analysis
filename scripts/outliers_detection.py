@@ -6,10 +6,10 @@ from tkinter.filedialog import askopenfilename
 
 
 def main():
-    input_file = askopenfilename()
+    input_file = askopenfilename(
+        title="Enter the to be Outlier detector file: ")
 
     # Read the csv file
-
     df = pd.read_csv(input_file)
     gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(
         df.lon, df.lat), crs="EPSG:4326")
@@ -27,7 +27,7 @@ def main():
     plt.title("Traffic Lights Outliers Detection")
     plt.xlabel("Longitude")
     plt.ylabel("Latitude")
-    plt.scatter(outliers['lon'], outliers['lat'],
+    plt.scatter(outliers.geometry.x, outliers.geometry.y,
                 color='blue', label='Outliers', s=10)
     plt.legend()
     plt.show()
