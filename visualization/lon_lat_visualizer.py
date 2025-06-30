@@ -1,14 +1,10 @@
 from utils.tabulate_dir import tabulate_files
-import contextily as ctx
-import matplotlib.pyplot as plt
-import geopandas as gpd
 import pandas as pd
-from rich import print
 from rich.prompt import IntPrompt
-from rich.panel import Panel
 from rich.console import Console
-from rich import box
 from utils.rich_tabulate import rich_tablulate
+import plotly.express as px
+from utils.zoom_center_plotly import zoom_center
 
 console = Console()
 
@@ -20,7 +16,7 @@ def main():
 
     try:
         input_index = IntPrompt.ask(
-            "Select the index of the file to visualize")
+            "Select the index of the file to Visualize Scatter Plot")
     except (ValueError, KeyboardInterrupt):
         console.print(
             "[bold red]No input provided or invalid input. Exiting...[/bold red]")
@@ -36,18 +32,32 @@ def main():
     console.print(f"[bold yellow]Selected region:[/bold yellow] {region_name}")
 
     df = pd.read_csv(input_file)
-    gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(
-        df.lon, df.lat), crs="EPSG:4326")
-    gdf = gdf.to_crs(epsg=3857)
 
-    # Plot the data
-    ax = gdf.plot(marker='o', color='red', markersize=2, figsize=(8, 8))
-    ctx.add_basemap(ax, source=ctx.providers.OpenStreetMap.Mapnik)
-    plt.title(f"Traffic Lights in {region_name}")
-    plt.xlabel("Longitude")
-    plt.ylabel("Latitude")
+    zoom, center = zoom_center(
+        lons=df["lon"].tolist(),
+        lats=df["lat"].tolist()
+    )
 
-    plt.show()
+    fig = px.scatter_map(
+        df,
+        lat="lat",
+        lon="lon",
+        hover_name="id" if "id" in df.columns else None,
+        center=center,
+        zoom=zoom,
+        map_style="open-street-map",
+        title=f"Traffic Lights in {region_name}",
+        labels={"lat": "Latitude", "lon": "Longitude",
+                "id": "Traffic Light ID"} if "id" in df.columns else None
+    )
+    fig.update_layout(
+        mapbox_style="open-street-map",
+        title=f"Traffic Lights in {region_name}",
+        margin={"r": 0, "t": 30, "l": 0, "b": 0}
+    )
+
+    fig.update_traces(marker=dict(size=5, color="blue", opacity=0.1))
+    fig.show()
 
 
 if __name__ == "__main__":

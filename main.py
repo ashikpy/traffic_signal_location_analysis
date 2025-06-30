@@ -2,13 +2,14 @@ from rich import box
 from scripts import (
     get_traffic_geojson_by_name,
     geojson_to_csv,
-    merge_csvs
+    merge_csvs,
 )
 
 from visualization import (
-    lon_lat_visualizer
+    lon_lat_visualizer,
+    heatmap_maker,
+    dbscan_cluster_visualizer,
 )
-
 
 from rich.console import Console
 from rich.prompt import Prompt
@@ -21,12 +22,15 @@ console = Console()
 available_scripts = [
     ("Get GeoJSON by name", get_traffic_geojson_by_name.main),
     ("Convert GeoJSON to CSV", geojson_to_csv.main),
-    ("Merge CSVs", merge_csvs.main)
+    ("Merge CSVs", merge_csvs.main),
 ]
 
 
 available_visualizations = [
-    ("Visualize From CSV (lon/lat)", lon_lat_visualizer.main)
+    ("Visualize Scatter Plot", lon_lat_visualizer.main),
+    ("Visualize Heatmap", heatmap_maker.main),
+    ("Visualize Clusters with DBSCAN",
+     dbscan_cluster_visualizer.main),
 ]
 
 
@@ -55,7 +59,7 @@ def main():
             console.print(
                 "[bold magenta]Enter 0 or any non-number to exit.[/bold magenta]")
             raw_input = Prompt.ask(
-                "\n[bold yellow]Select an option (0: Exit)[/bold yellow]")
+                "\n[bold yellow]Select an option[/bold yellow]")
             try:
                 choice = int(raw_input)
             except ValueError:

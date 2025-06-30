@@ -1,36 +1,67 @@
+from rich.prompt import IntPrompt
+from utils.zoom_center_plotly import zoom_center
+from utils.tabulate_dir import tabulate_files
+from utils.rich_tabulate import rich_tablulate
 import pandas as pd
 import plotly.express as px
-import numpy as np
-import plotly.io as pio
-from utils.zoom_center_plotly import zoom_center
+from rich.console import Console
+
+console = Console()
 
 
-# Load your data
-df = pd.read_csv('data/india.csv')
+def main():
+    csv_dir = "data/traffic_csv"
+    original_file = tabulate_files(csv_dir, "csv")[0]
+    rich_tablulate(original_file)
 
-# Compute zoom and center dynamically
-zoom, center = zoom_center(
-    df['lon'].tolist(), df['lat'].tolist())
+    try:
+        input_index = IntPrompt.ask(
+            "Select the index of the file to Visualize Heatmap")
 
-# Create the density map
-fig = px.density_map(df, lat='lat', lon='lon',
-                     radius=4,
-                     zoom=zoom,
-                     map_style='basic',
-                     color_continuous_scale='rainbow',
-                     center=center,
-                     title='Density Map of Traffic Signals in India',
-                     labels={'lat': 'Latitude', 'lon': 'Longitude'},
-                     height=1080,
-                     width=1080,
-                     )
-config = {
-    'toImageButtonOptions': {
-        'format': 'webp',  # one of png, svg, jpeg, webp
-        'filename': 'test',
-        'height': 1080,
-        'width': 1080,
-        'scale': 10}
-}
+    except (ValueError, KeyboardInterrupt):
+        console.print(
+            "[bold red]No input provided or invalid input. Exiting...[/bold red]")
+        return
 
-fig.show(config=config)
+    if input_index is None:
+        console.print("[bold red]No input received. Exiting...[/bold red]")
+        return
+    input_file = original_file[input_index]
+
+    region_name = input_file.split(
+        "/")[-1].split(".")[0].split("_")[0].capitalize()
+
+    console.print(f"[bold yellow]Selected region:[/bold yellow] {region_name}")
+
+    # Load your data
+    df = pd.read_csv(input_file)
+    if 'intensity' not in df.columns:
+        df['intensity'] = 1
+
+    # Compute zoom and center dynamically
+    zoom, center = zoom_center(
+        df['lon'].tolist(),
+        df['lat'].tolist()
+    )
+
+    fig = px.density_map(
+        df,
+        lat='lat',
+        lon='lon',
+        z='intensity',
+        radius=3,  # adjust this for spread
+        center=center,
+        zoom=zoom,
+        map_style='open-street-map',
+        color_continuous_scale='rainbow',
+        title=f'Density Map of Traffic Signals in {region_name}',
+        labels={'lat': 'Latitude', 'lon': 'Longitude'},
+        hover_name='id' if 'id' in df.columns else None
+    )
+
+    fig.update_traces(opacity=0.7)  # optional for transparency
+    fig.show()
+
+
+if __name__ == "__main__":
+    main()

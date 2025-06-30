@@ -13,10 +13,10 @@ console = Console()
 
 def fetch_traffic_signals(city_name):
     console.print(
-        Panel(Text("▶ Fetching Traffic Signals", style="bold blue"), expand=False))
+        Panel(Text("▶ Fetch GeoJSON by City Name", style="bold blue"), expand=False))
     query = f"""
     [out:json][timeout:300];
-    area["name"="{city_name}"]->.searchArea;
+    area["name:en"="{city_name}"]->.searchArea;
     node["highway"="traffic_signals"](area.searchArea);
     out body;
     >;
@@ -25,7 +25,7 @@ def fetch_traffic_signals(city_name):
 
     overpass_url = "http://overpass-api.de/api/interpreter"
 
-    console.print(fancy_text_box("Contacting OSM API"))
+    fancy_text_box("Contacting OSM API")
     console.print("Waiting for response", end="")
     for _ in range(6):
         time.sleep(0.3)
