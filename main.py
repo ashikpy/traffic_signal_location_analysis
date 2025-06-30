@@ -31,8 +31,8 @@ available_visualizations = [
     ("Visualize Scatter Plot", lon_lat_visualizer.main),
     ("Visualize Heatmap", heatmap_maker.main),
     ("Visualize Clusters with DBSCAN",
-     dbscan_cluster_visualizer.visualize_clusters),
-    ("Visualize States", visualize_states.visualize_states),
+     dbscan_cluster_visualizer.main),
+    ("Visualize States", visualize_states.main),
 ]
 
 

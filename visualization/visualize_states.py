@@ -8,13 +8,18 @@ from shapely.geometry import Point
 import plotly.express as px
 import os
 
+# NEEDED
+
 
 def main():
     input_file, region_name = csv_region_selector(
         purpose="to Visualize for a State")
-    print(f"Selected: {region_name}")
-    polygon_path = download_state_polygon(region_name)
+    print(f"Selected: {region_name.title()}")
 
+    polygon_path = download_state_polygon(region_name.title())
+    if not polygon_path or not os.path.exists(polygon_path):
+        print(f"[ERROR] Could not find or download polygon for {region_name}")
+        return
     polygon_gdf = gpd.read_file(polygon_path)
 
     df = pd.read_csv(input_file)

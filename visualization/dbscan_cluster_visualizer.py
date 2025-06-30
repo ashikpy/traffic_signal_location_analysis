@@ -1,5 +1,5 @@
 import plotly.graph_objects as go
-from scripts.clustering import run_dbscan
+from scripts.clustering_dbcsan import run_dbscan
 from utils.csv_region_selector import csv_region_selector
 from rich.console import Console
 from rich.table import Table
@@ -8,8 +8,10 @@ from visualization.bbox_visualizer import bbox_visualzier
 
 console = Console()
 
+# NEEDED
 
-def visualize_clusters():
+
+def main():
     input_file, region_name = csv_region_selector()
     console.print(f"[bold yellow]Selected Region:[/bold yellow] {region_name}")
 
@@ -129,10 +131,6 @@ def visualize_clusters():
         min_lat, max_lat = cluster_data['lat'].min(), cluster_data['lat'].max()
         bbox_str = f"min_lon={min_lon}, min_lat={min_lat}, max_lon={max_lon}, max_lat={max_lat}"
         bbox_visualzier(bbox_str, cluster_str, input_file, region_name)
-
-
-def main():
-    visualize_clusters()
 
 
 if __name__ == "__main__":

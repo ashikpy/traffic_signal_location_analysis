@@ -9,6 +9,8 @@ from utils.contstants import csv_dir, geojson_dir
 from utils.csv_region_selector import csv_region_selector
 
 
+# NEEDED
+
 def convert_geojson_to_csv(geojson_path, csv_dir):
     # Load GeoJSON data
     gdf = gpd.read_file(geojson_path)
@@ -69,12 +71,6 @@ def main():
     except (ValueError, IndexError) as e:
         console.print(f"[bold red]Invalid input:[/bold red] {e}")
         return
-
-    console.print(
-        "[bold cyan]Alternatively, select a CSV file from the converted list:[/bold cyan]")
-    input_file, region_name = csv_region_selector()
-    console.print(
-        f"[bold green]You selected:[/bold green] {input_file} ([italic]{region_name}[/italic])")
 
 
 if __name__ == "__main__":

@@ -10,6 +10,8 @@ from utils.fancy_text_box import fancy_text_box
 
 console = Console()
 
+# NEEDED
+
 
 def fetch_traffic_signals(city_name):
     console.print(
