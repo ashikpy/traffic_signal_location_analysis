@@ -16,6 +16,7 @@ from rich.console import Console
 from rich.prompt import Prompt
 from rich.panel import Panel
 from rich.text import Text
+from utils.line_title import line_title
 
 
 console = Console()
@@ -72,10 +73,16 @@ def main():
                 console.print("[bold red]Exiting...[/bold red]\n")
                 break
             elif 1 <= choice <= offset:
-                _, func = available_scripts[choice - 1]
+                name, func = available_scripts[choice - 1]
+                print("")
+                line_title(f"Running Script: {name}")
+                print("")
                 func()
             elif offset < choice <= offset + len(available_visualizations):
-                _, func = available_visualizations[choice - offset - 1]
+                name, func = available_visualizations[choice - offset - 1]
+                print("")
+                line_title(f"Running Visualization: {name}")
+                print("")
                 func()
             else:
                 console.print(
