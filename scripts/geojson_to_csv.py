@@ -5,6 +5,8 @@ from rich import print
 from rich.console import Console
 from rich.prompt import Prompt
 from utils.rich_tabulate import rich_tablulate
+from utils.contstants import csv_dir, geojson_dir
+from utils.csv_region_selector import csv_region_selector
 
 
 def convert_geojson_to_csv(geojson_path, csv_dir):
@@ -26,9 +28,8 @@ def convert_geojson_to_csv(geojson_path, csv_dir):
 
 
 def main():
-    geojson_dir = "data/traffic_geojson"
-    target_ext = "data/traffic_csv"
 
+    target_ext = csv_dir
     # Check if these directories exist
     try:
         os.makedirs(geojson_dir, exist_ok=True)
@@ -68,6 +69,12 @@ def main():
     except (ValueError, IndexError) as e:
         console.print(f"[bold red]Invalid input:[/bold red] {e}")
         return
+
+    console.print(
+        "[bold cyan]Alternatively, select a CSV file from the converted list:[/bold cyan]")
+    input_file, region_name = csv_region_selector()
+    console.print(
+        f"[bold green]You selected:[/bold green] {input_file} ([italic]{region_name}[/italic])")
 
 
 if __name__ == "__main__":

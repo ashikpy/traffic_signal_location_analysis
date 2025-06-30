@@ -1,35 +1,16 @@
 import plotly.graph_objects as go
 from scripts.clustering import run_dbscan
-from utils.rich_tabulate import rich_tablulate
-from utils.tabulate_dir import tabulate_files
+from utils.csv_region_selector import csv_region_selector
 from rich.console import Console
-from rich.prompt import IntPrompt
 from rich.table import Table
+from visualization.bbox_visualizer import bbox_visualzier
+
 
 console = Console()
 
 
 def visualize_clusters():
-    csv_dir = "data/traffic_csv"
-    all_files = tabulate_files(csv_dir, "csv")[0]
-    rich_tablulate(all_files)
-
-    try:
-        input_index = IntPrompt.ask(
-            "Select the index of the file to Visualize Scatter Plot")
-    except (ValueError, KeyboardInterrupt):
-        console.print(
-            "[bold red]No input provided or invalid input. Exiting...[/bold red]")
-        return
-
-    if input_index is None or input_index >= len(all_files):
-        console.print(
-            "[bold red]Invalid index selected. Exiting...[/bold red]")
-        return
-
-    input_file = all_files[input_index]
-    region_name = input_file.split(
-        "/")[-1].split(".")[0].split("_")[0].capitalize()
+    input_file, region_name = csv_region_selector()
     console.print(f"[bold yellow]Selected Region:[/bold yellow] {region_name}")
 
     eps = 0.05
@@ -134,8 +115,20 @@ def visualize_clusters():
         showlegend=True
     )
     fig.update_geos(visible=False)
-
     fig.show()
+
+    from rich.prompt import Prompt
+    while True:
+        cluster_str = Prompt.ask(
+            "Enter the cluster number to visualize (Q, To Quit)")
+        if not cluster_str.isdigit():
+            console.print("[bold red]Invalid input. Exiting...[/bold red]")
+            return
+        cluster_data = df[df['cluster'] == int(cluster_str)]
+        min_lon, max_lon = cluster_data['lon'].min(), cluster_data['lon'].max()
+        min_lat, max_lat = cluster_data['lat'].min(), cluster_data['lat'].max()
+        bbox_str = f"min_lon={min_lon}, min_lat={min_lat}, max_lon={max_lon}, max_lat={max_lat}"
+        bbox_visualzier(bbox_str, cluster_str, input_file, region_name)
 
 
 def main():

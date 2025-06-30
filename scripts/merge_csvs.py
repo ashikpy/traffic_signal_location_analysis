@@ -1,11 +1,10 @@
 from tkinter.filedialog import askopenfilename
 from utils.tabulate_dir import tabulate_files
 from utils.rich_tabulate import rich_tablulate
+from utils.contstants import csv_dir
 
 
 def main():
-
-    csv_dir = "data/traffic_csv"
     output_dir = "data/traffic_csv"
 
     file_paths = []

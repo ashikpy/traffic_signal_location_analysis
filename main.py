@@ -1,4 +1,3 @@
-from rich import box
 from scripts import (
     get_traffic_geojson_by_name,
     geojson_to_csv,
@@ -7,10 +6,12 @@ from scripts import (
 
 from visualization import (
     lon_lat_visualizer,
-    heatmap_maker,
     dbscan_cluster_visualizer,
+    heatmap_maker,
+    visualize_states
 )
 
+from rich import box
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.panel import Panel
@@ -30,7 +31,8 @@ available_visualizations = [
     ("Visualize Scatter Plot", lon_lat_visualizer.main),
     ("Visualize Heatmap", heatmap_maker.main),
     ("Visualize Clusters with DBSCAN",
-     dbscan_cluster_visualizer.main),
+     dbscan_cluster_visualizer.visualize_clusters),
+    ("Visualize States", visualize_states.visualize_states),
 ]
 
 
