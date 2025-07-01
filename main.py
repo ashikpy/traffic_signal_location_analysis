@@ -4,6 +4,7 @@ from scripts import (
     merge_csvs,
 )
 
+from utils.rich_components import print_panel
 from visualization import (
     lon_lat_visualizer,
     dbscan_cluster_visualizer,
@@ -40,8 +41,8 @@ available_visualizations = [
 def main():
     try:
         while True:
-            console.print(Panel(
-                Text("▶ Welcome to Traffic Data Analysis Tool",  style="bold blue"),  expand=False))
+            print_panel("Welcome to Traffic Data Analysis Tool",
+                        style="bold blue")
 
             script_list_text = "\n".join(
                 f"[bold green]{i}[/bold green]. {name}"
