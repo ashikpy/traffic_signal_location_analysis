@@ -3,14 +3,13 @@ import json
 import os
 import requests
 from rich.console import Console
-from rich.prompt import Prompt
+
 from rich.panel import Panel
 from rich.text import Text
 from utils.fancy_text_box import fancy_text_box
+from utils.rich_components import bold_color_print, bold_input
 
 console = Console()
-
-# NEEDED
 
 
 def fetch_traffic_signals(city_name):
@@ -36,8 +35,7 @@ def fetch_traffic_signals(city_name):
 
     response = requests.post(overpass_url, data=query)
     if response.status_code != 200:
-        console.print(
-            f"[bold red]Error: HTTP {response.status_code}[/bold red]")
+        bold_color_print(f"Error: HTTP {response.status_code}", "red")
         return
 
     data = response.json()
@@ -55,8 +53,7 @@ def fetch_traffic_signals(city_name):
             })
 
     if not features:
-        console.print(
-            f"[bold yellow]No traffic signals found for {city_name}. Nothing was saved.[/bold yellow]")
+        bold_color_print(f"No Traffic Signals Found for {city_name}", "yellow")
         return
 
     geojson = {
@@ -68,14 +65,13 @@ def fetch_traffic_signals(city_name):
     filepath = f"data/traffic_geojson/{city_name.lower()}_traffic_signals.geojson"
     with open(filepath, "w") as f:
         json.dump(geojson, f, indent=2)
-
-    console.print(f"[bold green]Saved to {filepath}[/bold green]")
+    bold_color_print(f"Saved to {filepath}", "green")
 
 
 def main():
-    city_name = Prompt.ask("[bold cyan]Enter a city name[/bold cyan]")
+    city_name = bold_input("Enter a city name", "cyan")
     if not city_name:
-        console.print("[bold red]City name cannot be empty.[/bold red]")
+        bold_color_print("City name cannot be empty.", "red")
         return
     city_name = city_name.strip()
     fetch_traffic_signals(city_name)

@@ -2,11 +2,10 @@ import geopandas as gpd
 from utils.tabulate_dir import tabulate_files
 import os
 from rich import print
-from rich.console import Console
 from rich.prompt import Prompt
 from utils.rich_tabulate import rich_tablulate
 from utils.contstants import csv_dir, geojson_dir
-from utils.csv_region_selector import csv_region_selector
+from utils.rich_components import bold_color_print, bold_input
 
 
 # NEEDED
@@ -40,36 +39,33 @@ def main():
         print(f"Error creating directories: {e}")
         return
 
-    console = Console()
-
     # Tabulate the files in the directory
     orignal_list = tabulate_files(geojson_dir, "geojson")[0]
 
     if not orignal_list:
-        console.print(
-            "[bold red]No GeoJSON files found in the directory.[/bold red]")
+        bold_color_print("No GeoJSON files found in the directory.", "red")
         return
     else:
         rich_tablulate(orignal_list)
 
     try:
-        index = int(Prompt.ask(
-            "[bold yellow]Enter the index of the GeoJSON file to convert (N to cancel)[/bold yellow]"))
+        index = int(bold_input(
+            "Enter the index of the GeoJSON file to convert (N to cancel)"))
         if index < 0 or index >= len(orignal_list):
             raise IndexError("Index out of range.")
         geojson_path = orignal_list[index]
-        console.print(f"[bold blue]Selected file:[/bold blue] {geojson_path}")
-        verification = Prompt.ask(
-            f"[bold magenta]Your CSV will be saved as [italic]{geojson_path.split('/')[-1].split('.')[0]}.csv[/italic]. Proceed? (Y/N)[/bold magenta]"
+        bold_color_print(f"Selected file: {geojson_path}", "blue")
+        verification = bold_input(
+            f"Your CSV will be saved as [italic]{geojson_path.split('/')[-1].split('.')[0]}.csv[/italic]. Proceed? (Y/N)", color="magenta"
         ).strip().upper()
         if verification != 'Y':
-            console.print("[bold red]Conversion cancelled.[/bold red]")
+            bold_color_print("Conversion cancelled.", "red")
             return
         else:
             result = convert_geojson_to_csv(geojson_path, target_ext)
-            console.print(f"[bold green]{result}[/bold green]")
+            bold_color_print(result, "green")
     except (ValueError, IndexError) as e:
-        console.print(f"[bold red]Invalid input:[/bold red] {e}")
+        bold_color_print(f"Invalid input: {e}", "red")
         return
 
 

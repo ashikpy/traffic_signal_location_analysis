@@ -1,10 +1,11 @@
+from rich.console import Console
 from scripts import (
     get_traffic_geojson_by_name,
     geojson_to_csv,
     merge_csvs,
 )
 
-from utils.rich_components import print_panel
+from utils.rich_components import bold_color_print, bold_input, box_text, numbered_list_panel, print_panel, line_title
 from visualization import (
     lon_lat_visualizer,
     dbscan_cluster_visualizer,
@@ -12,15 +13,6 @@ from visualization import (
     visualize_states
 )
 
-from rich import box
-from rich.console import Console
-from rich.prompt import Prompt
-from rich.panel import Panel
-from rich.text import Text
-from utils.line_title import line_title
-
-
-console = Console()
 
 available_scripts = [
     ("Get GeoJSON by name", get_traffic_geojson_by_name.main),
@@ -38,40 +30,38 @@ available_visualizations = [
 ]
 
 
+console = Console()
+
+
 def main():
     try:
         while True:
-            print_panel("Welcome to Traffic Data Analysis Tool",
-                        style="bold blue")
+            print_panel("Welcome to Traffic Data Analysis Tool")
 
-            script_list_text = "\n".join(
-                f"[bold green]{i}[/bold green]. {name}"
-                for i, (name, _) in enumerate(available_scripts, start=1)
-            )
-            console.print(Panel(script_list_text, title="Available Scripts",
-                          box=box.ROUNDED, style="green", expand=False))
+            # Display Available Scripts
+            script_list_text = numbered_list_panel(available_scripts, "green")
+            box_text(script_list_text, "Available Scripts", "green")
 
-            offset = len(available_scripts)
+            # Display Available Visualizations
+            viz_list_text = numbered_list_panel(
+                available_visualizations, "cyan", start=len(available_scripts) + 1)
+            box_text(viz_list_text, "Available Visualizations", "cyan")
 
-            viz_list_text = "\n".join(
-                f"[bold cyan]{i + offset}[/bold cyan]. {name}"
-                for i, (name, _) in enumerate(available_visualizations, start=1)
-            )
-            console.print(Panel(viz_list_text, title="Available Visualizations",
-                          box=box.ROUNDED, style="cyan", expand=False))
+            # Prompt for User Input
+            bold_color_print(
+                "Enter 0 or any non-number to exit.", "magenta")
+            raw_input = bold_input("Select an option", "yellow")
 
-            console.print(
-                "[bold magenta]Enter 0 or any non-number to exit.[/bold magenta]")
-            raw_input = Prompt.ask(
-                "\n[bold yellow]Select an option[/bold yellow]")
             try:
                 choice = int(raw_input)
             except ValueError:
-                console.print("[bold red]Exiting...[/bold red]\n")
+                bold_color_print("Exiting...\n", "red")
                 break
 
+            offset = len(available_scripts)
+
             if choice == 0:
-                console.print("[bold red]Exiting...[/bold red]\n")
+                bold_color_print("Exiting...", "red")
                 break
             elif 1 <= choice <= offset:
                 name, func = available_scripts[choice - 1]
@@ -86,11 +76,9 @@ def main():
                 print("")
                 func()
             else:
-                console.print(
-                    "[bold red]Invalid choice. Try again.[/bold red]")
+                bold_color_print("Invalid choice. Try Again.", "red")
     except KeyboardInterrupt:
-        console.print(
-            "\n[bold red]Interrupted. Exiting...[/bold red]")
+        bold_color_print("Interrupted. Exiting", "red", new_line=True)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from utils.csv_region_selector import csv_region_selector
 from rich.console import Console
 from rich.table import Table
 from visualization.bbox_visualizer import bbox_visualzier
+from utils.rich_components import bold_color_print, bold_input
 
 
 console = Console()
@@ -13,15 +14,15 @@ console = Console()
 
 def main():
     input_file, region_name = csv_region_selector()
-    console.print(f"[bold yellow]Selected Region:[/bold yellow] {region_name}")
+    bold_color_print(f"Selected Region: {region_name}", "yellow")
 
     eps = 0.05
     with console.status("[bold green]Running DBSCAN clustering...[/bold green]"):
         df = run_dbscan(input_file, eps=eps, min_samples=5)
 
     if 'cluster' not in df.columns:
-        console.print(
-            "[bold red]DBSCAN failed to produce 'cluster' column. Exiting...[/bold red]")
+        bold_color_print(
+            "DBSCAN failed to produce 'cluster' column. Exiting...", "red")
         return
 
     labels = df['cluster']
@@ -121,12 +122,14 @@ def main():
 
     from rich.prompt import Prompt
     while True:
-        cluster_str = Prompt.ask(
+        cluster_str = bold_input(
             "Enter the cluster number to visualize (Q, To Quit)")
-        if not cluster_str.isdigit():
-            console.print("[bold red]Invalid input. Exiting...[/bold red]")
+        try:
+            cluster_num = int(cluster_str)
+        except ValueError:
+            bold_color_print("Invalid input. Exiting...", "red")
             return
-        cluster_data = df[df['cluster'] == int(cluster_str)]
+        cluster_data = df[df['cluster'] == cluster_num]
         min_lon, max_lon = cluster_data['lon'].min(), cluster_data['lon'].max()
         min_lat, max_lat = cluster_data['lat'].min(), cluster_data['lat'].max()
         bbox_str = f"min_lon={min_lon}, min_lat={min_lat}, max_lon={max_lon}, max_lat={max_lat}"
